@@ -6,7 +6,7 @@ import (
 )
 
 type GPSP struct {
-	Heading int16
+	Accuracy uint16
 }
 
 func (gpsp *GPSP) Parse(bytes []byte) error {
@@ -14,7 +14,7 @@ func (gpsp *GPSP) Parse(bytes []byte) error {
 		return errors.New("Invalid length GPSP packet")
 	}
 
-	gpsp.Heading = int16(binary.BigEndian.Uint16(bytes[0:2]))
+	gpsp.Accuracy = binary.BigEndian.Uint16(bytes[0:2])
 
 	return nil
 }

@@ -10,7 +10,7 @@ type TMPC struct {
 	Temp float32
 }
 
-func (temp *TMPC) Parse(bytes []byte, scale *SCAL) error {
+func (temp *TMPC) Parse(bytes []byte) error {
 	if 4 != len(bytes) {
 		return errors.New("Invalid length TMPC packet")
 	}

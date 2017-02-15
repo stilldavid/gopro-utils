@@ -11,6 +11,7 @@ type GPS5 struct {
 	Altitude  float64 `json:"alt"`    // meters above wgs84 ellipsoid ?
 	Speed     float64 `json:"spd"`    // m/s
 	Speed3D   float64 `json:"spd_3d"` // m/s, standard error?
+	TS        int64   `json:"utc"`
 }
 
 func (gps *GPS5) Parse(bytes []byte, scale *SCAL) error {

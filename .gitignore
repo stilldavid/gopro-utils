@@ -1,2 +1,3 @@
 .DS_Store
-bin/bin
+bin/gpmdinfo/gpmdinfo
+bin/gopro2json/gopro2json
