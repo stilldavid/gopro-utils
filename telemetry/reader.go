@@ -1,7 +1,6 @@
 package telemetry
 
 import (
-	_ "encoding/binary"
 	"fmt"
 	"io"
 	"os"
@@ -116,6 +115,7 @@ func Read(f *os.File) *TELEM {
 				// I think DVID is the payload boundary.
 				if "DVID" == label_string {
 
+					// I think this might skip the first sentence
 					return t
 
 				} else if "GPS5" == label_string {

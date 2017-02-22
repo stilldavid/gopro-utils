@@ -6,6 +6,7 @@ import (
 	"math"
 )
 
+// Temperature in °C
 type TMPC struct {
 	Temp float32
 }

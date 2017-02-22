@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// 3-axis Gyroscope data in rad/s
 type GYRO struct {
 	X float64
 	Y float64

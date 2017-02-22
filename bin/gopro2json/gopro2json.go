@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "encoding/binary"
 	"flag"
 	"fmt"
 	"os"
@@ -22,19 +21,20 @@ func main() {
 	telemFile, err := os.Open(*inName)
 	if err != nil {
 		fmt.Println("Cannot access telemetry file %s.\n", *inName)
-		return
+		os.Exit(1)
 	}
 
 	jsonFile, err := os.Create(*outName)
 	if err != nil {
 		fmt.Println("Cannot make output file %s.\n", *outName)
-		return
+		os.Exit(1)
 	}
 
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
 			fmt.Println("Cannot close file", file.Name(), err)
+			os.Exit(1)
 		}
 	}(telemFile)
 
@@ -42,10 +42,10 @@ func main() {
 		err := file.Close()
 		if err != nil {
 			fmt.Println("Cannot close file", file.Name(), err)
+			os.Exit(1)
 		}
 	}(jsonFile)
 
-	//fmt.Println(`insert into flight_point (utc, acft_alt, acft_hdg, speed, acft, video_id) values`)
 	jsonFile.WriteString(`{"data":[`)
 
 	t := &telemetry.TELEM{}
@@ -65,7 +65,7 @@ func main() {
 			continue
 		}
 
-		// process until t.Tim
+		// process until t.Time
 		t_prev.Process(t.Time.Time)
 
 		buf, _ := t_prev.ShitJson(first)
@@ -78,5 +78,6 @@ func main() {
 		t = &telemetry.TELEM{}
 	}
 
+	// end the bogusness
 	jsonFile.WriteString(`]}`)
 }

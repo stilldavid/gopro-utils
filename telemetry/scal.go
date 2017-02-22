@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// Scale object - contains slice of multipliers for subsequent data
 type SCAL struct {
 	Values []int
 }

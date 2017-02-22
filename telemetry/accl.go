@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// Accelerometer in m/s for XYZ
 type ACCL struct {
 	X float64
 	Y float64

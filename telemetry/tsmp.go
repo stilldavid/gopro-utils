@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// Total number of samples
 type TSMP struct {
 	Samples uint32
 }

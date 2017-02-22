@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// GPS-acquired timestamp
 type GPSU struct {
 	Time time.Time
 }

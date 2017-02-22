@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// GPS position accuracy in cm
 type GPSP struct {
 	Accuracy uint16
 }

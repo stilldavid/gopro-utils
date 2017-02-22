@@ -3,7 +3,7 @@ package telemetry
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/paulmach/go.geo"
@@ -11,16 +11,17 @@ import (
 
 // Represents one second of telemetry data
 type TELEM struct {
-	Accl        []ACCL `json:"-"`
-	Gps         []GPS5 `json:"gps"`
-	Gyro        []GYRO `json:"-"`
-	GpsFix      GPSF   `json:"gps_fix"`
-	GpsAccuracy GPSP   `json:"gps_accuracy"`
-	Time        GPSU   `json:"-"`
-	Temp        TMPC   `json:"temp"`
+	Accl        []ACCL
+	Gps         []GPS5
+	Gyro        []GYRO
+	GpsFix      GPSF
+	GpsAccuracy GPSP
+	Time        GPSU
+	Temp        TMPC
 }
 
 // the thing we want, json-wise
+// GPS data might have a generated timestamp
 type TELEM_OUT struct {
 	*GPS5
 
@@ -43,13 +44,12 @@ func (t *TELEM) Clear() {
 
 // determines if the telem has data
 func (t *TELEM) IsZero() bool {
-	// hack?
+	// hack.
 	return t.Time.Time.IsZero()
 }
 
+// try to populate a timestamp for every GPS row. probably bogus.
 func (t *TELEM) Process(until time.Time) error {
-	//fmt.Printf("processing from %v to %v\n", t.Time.Time, until)
-
 	len := len(t.Gps)
 	diff := until.Sub(t.Time.Time)
 
@@ -59,7 +59,6 @@ func (t *TELEM) Process(until time.Time) error {
 		dur := time.Duration(float64(i)*offset*1000) * time.Millisecond
 		ts := t.Time.Time.Add(dur)
 		t.Gps[i].TS = ts.UnixNano() / 1000
-		//fmt.Printf("\t%v: %v\ta: %v\ts: %v\tf: %v\n", i, ts, t.Gps[i].Altitude, t.Gps[i].Speed, t.Temp)
 	}
 
 	return nil
@@ -97,12 +96,12 @@ func (t *TELEM) ShitJson(first bool) (bytes.Buffer, error) {
 
 		jstr, err := json.Marshal(jobj)
 		if err != nil {
-			fmt.Printf("error jsoning\n")
-			break
+			return buffer, errors.New("error jsoning\n")
 		}
 
 		buffer.Write(jstr)
 
 	}
+
 	return buffer, nil
 }

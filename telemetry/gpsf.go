@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// GPS Fix
 type GPSF struct {
 	F uint32
 }
