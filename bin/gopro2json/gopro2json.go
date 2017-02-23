@@ -53,7 +53,11 @@ func main() {
 	first := true
 
 	for {
-		t = telemetry.Read(telemFile)
+		t, err = telemetry.Read(telemFile)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		if t == nil {
 			break
 		}

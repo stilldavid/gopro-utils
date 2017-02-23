@@ -37,7 +37,11 @@ func main() {
 	t_prev := &telemetry.TELEM{}
 
 	for {
-		t = telemetry.Read(telemFile)
+		t, err = telemetry.Read(telemFile)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		if t == nil {
 			break
 		}
