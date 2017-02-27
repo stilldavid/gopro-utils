@@ -20,20 +20,20 @@ func main() {
 
 	telemFile, err := os.Open(*inName)
 	if err != nil {
-		fmt.Println("Cannot access telemetry file %s.\n", *inName)
+		fmt.Printf("Cannot access telemetry file %s.\n", *inName)
 		os.Exit(1)
 	}
 
 	jsonFile, err := os.Create(*outName)
 	if err != nil {
-		fmt.Println("Cannot make output file %s.\n", *outName)
+		fmt.Printf("Cannot make output file %s.\n", *outName)
 		os.Exit(1)
 	}
 
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
-			fmt.Println("Cannot close file", file.Name(), err)
+			fmt.Printf("Cannot close file %s: %s", file.Name(), err)
 			os.Exit(1)
 		}
 	}(telemFile)
@@ -41,7 +41,7 @@ func main() {
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
-			fmt.Println("Cannot close file", file.Name(), err)
+			fmt.Printf("Cannot close file %s: %s", file.Name(), err)
 			os.Exit(1)
 		}
 	}(jsonFile)
