@@ -51,7 +51,9 @@ func Read(f *os.File) (*TELEM, error) {
 			return nil, err
 		}
 
-		if !stringInSlice(string(label), labels) {
+		label_string := string(label)
+
+		if !stringInSlice(label_string, labels) {
 			err := fmt.Errorf("Could not find label in list: %s (%x)\n", label, label)
 			return nil, err
 		}
@@ -68,7 +70,7 @@ func Read(f *os.File) (*TELEM, error) {
 		}
 
 		// skip empty packets
-		if "EMPT" == string(label) {
+		if "EMPT" == label_string {
 			_, err = f.Seek(4, 1)
 			if err != nil {
 				fmt.Println(err)
@@ -82,7 +84,10 @@ func Read(f *os.File) (*TELEM, error) {
 		num_values := (int64(desc[2]) << 8) | int64(desc[3])
 		length := val_size * num_values
 
-		if "SCAL" == string(label) {
+		// uncomment to see label, type, size and length
+		//fmt.Printf("%s (%c) of size %v and len %v\n", label, desc[0], val_size, length)
+
+		if "SCAL" == label_string {
 			value := make([]byte, val_size*num_values, val_size*num_values)
 			read, err = f.Read(value)
 			if err == io.EOF || read == 0 {
@@ -105,12 +110,10 @@ func Read(f *os.File) (*TELEM, error) {
 					return nil, err
 				}
 
-				label_string := string(label)
-
-				// I think DVID is the payload boundary.
+				// I think DVID is the payload boundary; this might be a bad assumption
 				if "DVID" == label_string {
 
-					// I think this might skip the first sentence
+					// XXX: I think this might skip the first sentence
 					return t, nil
 
 				} else if "GPS5" == label_string {
@@ -167,7 +170,7 @@ func Read(f *os.File) (*TELEM, error) {
 					//fmt.Printf("\tvals: %s\n", value)
 				} else if "DVNM" == label_string {
 					// device name, "Camera"
-					// fmt.Printf("\tvals: %s\n", value)
+					//fmt.Printf("\tvals: %s\n", value)
 				} else {
 					//fmt.Printf("\tvalue is %v\n", value)
 				}
