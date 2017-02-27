@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/stilldavid/gopro-utils/telemetry"
@@ -39,9 +40,13 @@ func main() {
 	for {
 		t, err = telemetry.Read(telemFile)
 		if err != nil {
+			if err == io.EOF {
+				break
+			}
 			fmt.Println(err)
 			os.Exit(1)
 		}
+
 		if t == nil {
 			break
 		}
@@ -57,6 +62,7 @@ func main() {
 		t_prev.Process(t.Time.Time)
 
 		// this is pretty useless: change it to pick a field you want
+		// or mangle it to your wishes
 		fmt.Println(t_prev.Time)
 
 		*t_prev = *t
