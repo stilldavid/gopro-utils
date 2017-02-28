@@ -1,9 +1,6 @@
 package telemetry
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
 	"time"
 
 	"github.com/paulmach/go.geo"
@@ -64,15 +61,10 @@ func (t *TELEM) Process(until time.Time) error {
 	return nil
 }
 
-func (t *TELEM) ShitJson(first bool) (bytes.Buffer, error) {
-	var buffer bytes.Buffer
+func (t *TELEM) ShitJson() []TELEM_OUT {
+	var out []TELEM_OUT
 
 	for i, tp := range t.Gps {
-		if first && i == 0 {
-		} else {
-			buffer.Write([]byte(","))
-		}
-
 		jobj := TELEM_OUT{&tp, 0, 0, 0, 0}
 		if 0 == i {
 			jobj.GpsAccuracy = t.GpsAccuracy.Accuracy
@@ -96,14 +88,8 @@ func (t *TELEM) ShitJson(first bool) (bytes.Buffer, error) {
 			jobj.Track = last_good_track
 		}
 
-		jstr, err := json.Marshal(jobj)
-		if err != nil {
-			return buffer, errors.New("error jsoning\n")
-		}
-
-		buffer.Write(jstr)
-
+		out = append(out, jobj)
 	}
 
-	return buffer, nil
+	return out
 }
