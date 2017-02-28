@@ -59,7 +59,7 @@ func main() {
 		}
 
 		// process the previous timestamp until current known timestamp
-		t_prev.Process(t.Time.Time)
+		t_prev.FillTimes(t.Time.Time)
 
 		// this is pretty useless: change it to pick a field you want
 		// or mangle it to your wishes

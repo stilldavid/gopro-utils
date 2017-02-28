@@ -46,7 +46,7 @@ func (t *TELEM) IsZero() bool {
 }
 
 // try to populate a timestamp for every GPS row. probably bogus.
-func (t *TELEM) Process(until time.Time) error {
+func (t *TELEM) FillTimes(until time.Time) error {
 	len := len(t.Gps)
 	diff := until.Sub(t.Time.Time)
 

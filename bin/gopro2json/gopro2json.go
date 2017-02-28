@@ -53,7 +53,7 @@ func main() {
 		}
 
 		// process until t.Time
-		t_prev.Process(t.Time.Time)
+		t_prev.FillTimes(t.Time.Time)
 
 		telems := t_prev.ShitJson()
 		d.Data = append(d.Data, telems...)
