@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/stilldavid/gopro-utils/telemetry"
@@ -55,6 +56,9 @@ func main() {
 	for {
 		t, err = telemetry.Read(telemFile)
 		if err != nil {
+			if err == io.EOF {
+				break
+			}
 			fmt.Println(err)
 			os.Exit(1)
 		}
