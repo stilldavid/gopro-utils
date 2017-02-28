@@ -98,7 +98,7 @@ func Read(f io.Reader) (*TELEM, error) {
 				return nil, err
 			}
 		} else {
-			value := make([]byte, val_size, val_size)
+			value := make([]byte, val_size)
 
 			for i := int64(0); i < num_values; i++ {
 				read, err := f.Read(value)

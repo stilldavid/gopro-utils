@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// GPS sentence with lat/lon/alt/speed/3d speed
 type GPS5 struct {
 	Latitude  float64 `json:"lat"`    // degrees lat
 	Longitude float64 `json:"lon"`    // degrees lon

@@ -21,18 +21,18 @@ type TELEM struct {
 }
 
 // the thing we want, json-wise
-// GPS data might have a generated timestamp
+// GPS data might have a generated timestamp and derived track
 type TELEM_OUT struct {
 	*GPS5
 
 	GpsAccuracy uint16  `json:"gps_accuracy,omitempty"`
 	GpsFix      uint32  `json:"gps_fix,omitempty"`
 	Temp        float32 `json:"temp,omitempty"`
-	Heading     float64 `json:"heading,omitempty"`
+	Track       float64 `json:"track,omitempty"`
 }
 
 var pp *geo.Point = geo.NewPoint(10, 10)
-var last_good_heading float64 = 0
+var last_good_track float64 = 0
 
 // zeroes out the telem struct
 func (t *TELEM) Clear() {
@@ -81,17 +81,19 @@ func (t *TELEM) ShitJson(first bool) (bytes.Buffer, error) {
 		}
 
 		p := geo.NewPoint(tp.Longitude, tp.Latitude)
-		jobj.Heading = pp.BearingTo(p)
+		jobj.Track = pp.BearingTo(p)
 		pp = p
 
-		if jobj.Heading < 0 {
-			jobj.Heading = 360 + jobj.Heading
+		if jobj.Track < 0 {
+			jobj.Track = 360 + jobj.Track
 		}
 
+		// only set the track if speed is over 1 m/s
+		// if it's slower (eg, stopped) it will drift all over with the location
 		if tp.Speed > 1 {
-			last_good_heading = jobj.Heading
+			last_good_track = jobj.Track
 		} else {
-			jobj.Heading = last_good_heading
+			jobj.Track = last_good_track
 		}
 
 		jstr, err := json.Marshal(jobj)
