@@ -64,15 +64,15 @@ func (t *TELEM) Process(until time.Time) error {
 func (t *TELEM) ShitJson() []TELEM_OUT {
 	var out []TELEM_OUT
 
-	for i, tp := range t.Gps {
-		jobj := TELEM_OUT{&tp, 0, 0, 0, 0}
+	for i, _ := range t.Gps {
+		jobj := TELEM_OUT{&t.Gps[i], 0, 0, 0, 0}
 		if 0 == i {
 			jobj.GpsAccuracy = t.GpsAccuracy.Accuracy
 			jobj.GpsFix = t.GpsFix.F
 			jobj.Temp = t.Temp.Temp
 		}
 
-		p := geo.NewPoint(tp.Longitude, tp.Latitude)
+		p := geo.NewPoint(jobj.GPS5.Longitude, jobj.GPS5.Latitude)
 		jobj.Track = pp.BearingTo(p)
 		pp = p
 
@@ -82,7 +82,7 @@ func (t *TELEM) ShitJson() []TELEM_OUT {
 
 		// only set the track if speed is over 1 m/s
 		// if it's slower (eg, stopped) it will drift all over with the location
-		if tp.Speed > 1 {
+		if jobj.GPS5.Speed > 1 {
 			last_good_track = jobj.Track
 		} else {
 			jobj.Track = last_good_track
