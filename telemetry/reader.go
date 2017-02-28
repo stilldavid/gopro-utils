@@ -3,7 +3,7 @@ package telemetry
 import (
 	"fmt"
 	"io"
-	"os"
+	"io/ioutil"
 )
 
 func stringInSlice(a string, list []string) bool {
@@ -15,7 +15,7 @@ func stringInSlice(a string, list []string) bool {
 	return false
 }
 
-func Read(f *os.File) (*TELEM, error) {
+func Read(f io.Reader) (*TELEM, error) {
 	labels := []string{
 		"ACCL",
 		"DEVC",
@@ -41,7 +41,7 @@ func Read(f *os.File) (*TELEM, error) {
 	// keep a copy of the scale to apply to subsequent sentences
 	s := SCAL{}
 
-	// keep a copy of the full telemetry
+	// the full telemetry for this period
 	t := &TELEM{}
 
 	for {
@@ -71,11 +71,7 @@ func Read(f *os.File) (*TELEM, error) {
 
 		// skip empty packets
 		if "EMPT" == label_string {
-			_, err = f.Seek(4, 1)
-			if err != nil {
-				fmt.Println(err)
-				break
-			}
+			io.CopyN(ioutil.Discard, f, 4)
 			continue
 		}
 
@@ -181,10 +177,7 @@ func Read(f *os.File) (*TELEM, error) {
 		mod := length % 4
 		if mod != 0 {
 			seek := 4 - mod
-			_, err = f.Seek(seek, 1)
-			if err != nil {
-				break
-			}
+			io.CopyN(ioutil.Discard, f, seek)
 		}
 	}
 
