@@ -9,13 +9,11 @@ TLDR:
 
 ---
 
-**This is bad code and you probably shouldn't use it.** I wrote it in a hurry, and I don't really know Go all that well. Consider the API *UNSTABLE* and this all to be very alpha and without tests yet.
-
----
-
 I spent some time trying to reverse-engineer the GoPro Metadata Format (GPMD or GPMDF) that is stored in GoPro Hero 5 cameras if GPS is enabled. This is what I found.
 
-Part of this code _is_ in production on [Earthscape](https://public.earthscape.com/); for an example of what you can do with the extracted data, see [this video](https://public.earthscape.com/videos/10231).
+Part of this code is in production on [Earthscape](https://public.earthscape.com/); for an example of what you can do with the extracted data, see [this video](https://public.earthscape.com/videos/10231).
+
+If you enjoy working on this sort of thing, please see our [careers page](https://churchillnavigation.com/careers/).
 
 
 Extracting the Metadata File
