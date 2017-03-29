@@ -34,8 +34,6 @@ func main() {
 
 	// currently processing sentence
 	t := &telemetry.TELEM{}
-	// previous sentence - keep it around mostly for the timestamp
-	t_prev := &telemetry.TELEM{}
 
 	for {
 		t, err = telemetry.Read(telemFile)
@@ -51,21 +49,10 @@ func main() {
 			break
 		}
 
-		// first full, guess it's about a second
-		if t_prev.IsZero() {
-			*t_prev = *t
-			t.Clear()
-			continue
-		}
+		// this is pretty useless and info overload: change it to pick a field you want
+		// or mangle it to your wishes into JSON/CSV/format of choice
+		fmt.Println(t)
 
-		// process the previous timestamp until current known timestamp
-		t_prev.FillTimes(t.Time.Time)
-
-		// this is pretty useless: change it to pick a field you want
-		// or mangle it to your wishes
-		fmt.Println(t_prev.Time)
-
-		*t_prev = *t
 		t = &telemetry.TELEM{}
 	}
 }
