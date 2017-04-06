@@ -22,11 +22,13 @@ func Read(f io.Reader) (*TELEM, error) {
 		"DVID",
 		"DVNM",
 		"EMPT",
+		"GPRO",
 		"GPS5",
 		"GPSF",
 		"GPSP",
 		"GPSU",
 		"GYRO",
+		"HD5.",
 		"SCAL",
 		"SIUN",
 		"STRM",
@@ -111,7 +113,6 @@ func Read(f io.Reader) (*TELEM, error) {
 
 					// XXX: I think this might skip the first sentence
 					return t, nil
-
 				} else if "GPS5" == label_string {
 					g := GPS5{}
 					g.Parse(value, &s)
