@@ -60,12 +60,11 @@ func main() {
 			segment.AppendPoint(
 				&gpx.GPXPoint{
 					Point: gpx.Point{
-						Latitude: telems[i].Latitude,
+						Latitude:  telems[i].Latitude,
 						Longitude: telems[i].Longitude,
 						Elevation: *gpx.NewNullableFloat64(telems[i].Altitude),
 					},
-					Timestamp: time.Unix(telems[i].TS/1000/1000, telems[i].TS%(1000*1000),
-				),
+					Timestamp: time.Unix(telems[i].TS/1000/1000, telems[i].TS%(1000*1000)),
 				},
 			)
 		}
