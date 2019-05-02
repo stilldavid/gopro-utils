@@ -55,7 +55,7 @@ func (t *TELEM) FillTimes(until time.Time) error {
 	for i, _ := range t.Gps {
 		dur := time.Duration(float64(i)*offset*1000) * time.Millisecond
 		ts := t.Time.Time.Add(dur)
-		t.Gps[i].TS = ts.UnixNano() / 1000
+		t.Gps[i].TS = ts.UnixNano() / int64(time.Millisecond)
 	}
 
 	return nil
