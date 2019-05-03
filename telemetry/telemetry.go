@@ -1,6 +1,7 @@
 package telemetry
 
 import (
+	"math"
 	"time"
 
 	"github.com/paulmach/go.geo"
@@ -55,7 +56,8 @@ func (t *TELEM) FillTimes(until time.Time) error {
 	for i, _ := range t.Gps {
 		dur := time.Duration(float64(i)*offset*1000) * time.Millisecond
 		ts := t.Time.Time.Add(dur)
-		t.Gps[i].TS = ts.UnixNano() / 1000
+		pre_round := float64(ts.UnixNano()) / float64(time.Second)
+		t.Gps[i].TS = math.Round(pre_round / .001) * .001
 	}
 
 	return nil
