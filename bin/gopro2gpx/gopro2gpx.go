@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"time"
 
@@ -57,6 +58,9 @@ func main() {
 		telems := t_prev.ShitJson()
 
 		for i, _ := range telems {
+			secs := int64(math.Floor(telems[i].TS))
+			// get the decimal part of the timestamp as an integer (representing nanoseconds)
+			nsecs := int64((telems[i].TS * 1000) - (math.Floor(telems[i].TS) * 1000)) * int64(time.Millisecond)
 			segment.AppendPoint(
 				&gpx.GPXPoint{
 					Point: gpx.Point{
@@ -64,7 +68,7 @@ func main() {
 						Longitude: telems[i].Longitude,
 						Elevation: *gpx.NewNullableFloat64(telems[i].Altitude),
 					},
-					Timestamp: time.Unix(telems[i].TS/1000/1000, telems[i].TS%(1000*1000)*1000),
+					Timestamp: time.Unix(secs, nsecs),
 				},
 			)
 		}
