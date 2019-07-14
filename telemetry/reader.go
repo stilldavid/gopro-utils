@@ -69,7 +69,7 @@ func Read(f io.Reader) (*TELEM, error) {
 
 	for {
 		// pick out the label
-		read, err := f.Read(label)
+		read, err := io.ReadFull(f, label)
 		if err == io.EOF || read == 0 {
 			return nil, err
 		}
@@ -82,7 +82,7 @@ func Read(f io.Reader) (*TELEM, error) {
 		}
 
 		// pick out the label description
-		read, err = f.Read(desc)
+		read, err = io.ReadFull(f, desc)
 		if err == io.EOF || read == 0 {
 			break
 		}
@@ -94,7 +94,9 @@ func Read(f io.Reader) (*TELEM, error) {
 
 		// skip empty packets
 		if "EMPT" == label_string {
-			io.CopyN(ioutil.Discard, f, 4)
+			if _, err := io.CopyN(ioutil.Discard, f, 4); err != nil {
+				return nil, err
+			}
 			continue
 		}
 
@@ -108,7 +110,7 @@ func Read(f io.Reader) (*TELEM, error) {
 
 		if "SCAL" == label_string {
 			value := make([]byte, val_size*num_values, val_size*num_values)
-			read, err = f.Read(value)
+			read, err = io.ReadFull(f, value)
 			if err == io.EOF || read == 0 {
 				return nil, err
 			}
@@ -124,7 +126,7 @@ func Read(f io.Reader) (*TELEM, error) {
 			value := make([]byte, val_size)
 
 			for i := int64(0); i < num_values; i++ {
-				read, err := f.Read(value)
+				read, err := io.ReadFull(f, value)
 				if err == io.EOF || read == 0 {
 					return nil, err
 				}
@@ -199,7 +201,9 @@ func Read(f io.Reader) (*TELEM, error) {
 		mod := length % 4
 		if mod != 0 {
 			seek := 4 - mod
-			io.CopyN(ioutil.Discard, f, seek)
+			if _, err := io.CopyN(ioutil.Discard, f, seek); err != nil {
+				return nil, err
+			}
 		}
 	}
 
