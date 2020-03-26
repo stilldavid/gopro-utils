@@ -1,3 +1,5 @@
+Fork of stilldavids repo to allow for GoPro 8 files
+
 GoPro Metadata Format Parser
 ============================
 
