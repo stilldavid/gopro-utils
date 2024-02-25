@@ -11,8 +11,8 @@ type GPSU struct {
 }
 
 func (gpsu *GPSU) Parse(bytes []byte) error {
-	if 16 != len(bytes) {
-		return errors.New("Invalid length GPSU packet")
+	if len(bytes) != 16 {
+		return errors.New("invalid length GPSU packet")
 	}
 
 	t, err := time.Parse("060102150405", string(bytes))

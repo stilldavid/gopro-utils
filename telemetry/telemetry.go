@@ -3,7 +3,7 @@ package telemetry
 import (
 	"time"
 
-	"github.com/paulmach/go.geo"
+	geo "github.com/paulmach/go.geo"
 )
 
 // Represents one second of telemetry data
@@ -52,7 +52,7 @@ func (t *TELEM) FillTimes(until time.Time) error {
 
 	offset := diff.Seconds() / float64(len)
 
-	for i, _ := range t.Gps {
+	for i := range t.Gps {
 		dur := time.Duration(float64(i)*offset*1000) * time.Millisecond
 		ts := t.Time.Time.Add(dur)
 		t.Gps[i].TS = ts.UnixNano() / 1000
@@ -64,9 +64,9 @@ func (t *TELEM) FillTimes(until time.Time) error {
 func (t *TELEM) ShitJson() []TELEM_OUT {
 	var out []TELEM_OUT
 
-	for i, _ := range t.Gps {
+	for i := range t.Gps {
 		jobj := TELEM_OUT{&t.Gps[i], 0, 0, 0, 0}
-		if 0 == i {
+		if i == 0 {
 			jobj.GpsAccuracy = t.GpsAccuracy.Accuracy
 			jobj.GpsFix = t.GpsFix.F
 			jobj.Temp = t.Temp.Temp

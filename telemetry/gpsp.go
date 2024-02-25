@@ -11,8 +11,8 @@ type GPSP struct {
 }
 
 func (gpsp *GPSP) Parse(bytes []byte) error {
-	if 2 != len(bytes) {
-		return errors.New("Invalid length GPSP packet")
+	if len(bytes) != 2 {
+		return errors.New("invalid length GPSP packet")
 	}
 
 	gpsp.Accuracy = binary.BigEndian.Uint16(bytes[0:2])

@@ -12,8 +12,8 @@ type TMPC struct {
 }
 
 func (temp *TMPC) Parse(bytes []byte) error {
-	if 4 != len(bytes) {
-		return errors.New("Invalid length TMPC packet")
+	if len(bytes) != 4 {
+		return errors.New("invalid length TMPC packet")
 	}
 
 	bits := binary.BigEndian.Uint32(bytes[0:4])

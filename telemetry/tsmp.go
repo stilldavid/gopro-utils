@@ -11,8 +11,8 @@ type TSMP struct {
 }
 
 func (t *TSMP) Parse(bytes []byte, scale *SCAL) error {
-	if 4 != len(bytes) {
-		return errors.New("Invalid length TSMP packet")
+	if len(bytes) != 4 {
+		return errors.New("invalid length TSMP packet")
 	}
 
 	t.Samples = binary.BigEndian.Uint32(bytes[0:4])
