@@ -15,6 +15,7 @@ type TELEM struct {
 	GpsAccuracy GPSP
 	Time        GPSU
 	Temp        TMPC
+	Magn        []MAGN
 }
 
 // the thing we want, json-wise

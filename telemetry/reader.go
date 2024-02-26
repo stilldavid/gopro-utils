@@ -191,6 +191,13 @@ func Read(f io.Reader) (*TELEM, error) {
 						return nil, err
 					}
 					t.GpsFix = g
+				} else if label_string == "MAGN" {
+					m := MAGN{}
+					err := m.Parse(value, &s)
+					if err != nil {
+						return nil, err
+					}
+					t.Magn = append(t.Magn, m)
 				}
 				//  else if label_string == "UNIT" {
 				// 	// this is a string of units like "rad/s", not sure if it changes
