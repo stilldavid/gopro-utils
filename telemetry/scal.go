@@ -13,8 +13,8 @@ type SCAL struct {
 func (scale *SCAL) Parse(bytes []byte, size int64) error {
 	s := int(size)
 
-	if 0 != len(bytes)%s {
-		return errors.New("Invalid length SCAL packet")
+	if len(bytes)%s != 0 {
+		return errors.New("invalid length SCAL packet")
 	}
 
 	if s == 2 {
@@ -26,7 +26,7 @@ func (scale *SCAL) Parse(bytes []byte, size int64) error {
 			scale.Values = append(scale.Values, int(binary.BigEndian.Uint32(bytes[i:i+s])))
 		}
 	} else {
-		return errors.New("Unknown SCAL length")
+		return errors.New("unknown SCAL length")
 	}
 
 	return nil

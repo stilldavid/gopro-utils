@@ -13,8 +13,8 @@ type ACCL struct {
 }
 
 func (accl *ACCL) Parse(bytes []byte, scale *SCAL) error {
-	if 6 != len(bytes) {
-		return errors.New("Invalid length ACCL packet")
+	if len(bytes) != 6 {
+		return errors.New("invalid length ACCL packet")
 	}
 
 	accl.X = float64(int16(binary.BigEndian.Uint16(bytes[0:2]))) / float64(scale.Values[0])

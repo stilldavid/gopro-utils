@@ -7,7 +7,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/stilldavid/gopro-utils/telemetry"
+	"gopro-utils/telemetry"
+
 	"github.com/tkrajina/gpxgo/gpx"
 )
 
@@ -56,7 +57,7 @@ func main() {
 		t_prev.FillTimes(t.Time.Time)
 		telems := t_prev.ShitJson()
 
-		for i, _ := range telems {
+		for i := range telems {
 			segment.AppendPoint(
 				&gpx.GPXPoint{
 					Point: gpx.Point{
@@ -90,6 +91,6 @@ func main() {
 		}
 	}(gpxFile)
 
-	xml, err := gpxData.ToXml(gpx.ToXmlParams{Version: "1.1", Indent: true})
+	xml, _ := gpxData.ToXml(gpx.ToXmlParams{Version: "1.1", Indent: true})
 	gpxFile.Write(xml)
 }

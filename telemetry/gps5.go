@@ -16,8 +16,8 @@ type GPS5 struct {
 }
 
 func (gps *GPS5) Parse(bytes []byte, scale *SCAL) error {
-	if 20 != len(bytes) {
-		return errors.New("Invalid length GPS5 packet")
+	if len(bytes) != 20 {
+		return errors.New("invalid length GPS5 packet")
 	}
 
 	gps.Latitude = float64(int32(binary.BigEndian.Uint32(bytes[0:4]))) / float64(scale.Values[0])

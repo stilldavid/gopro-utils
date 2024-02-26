@@ -11,8 +11,8 @@ type GPSF struct {
 }
 
 func (gpsf *GPSF) Parse(bytes []byte) error {
-	if 4 != len(bytes) {
-		return errors.New("Invalid length GPSF packet")
+	if len(bytes) != 4 {
+		return errors.New("invalid length GPSF packet")
 	}
 
 	gpsf.F = binary.BigEndian.Uint32(bytes[0:4])

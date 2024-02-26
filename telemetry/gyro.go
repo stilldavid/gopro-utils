@@ -13,8 +13,8 @@ type GYRO struct {
 }
 
 func (gyro *GYRO) Parse(bytes []byte, scale *SCAL) error {
-	if 6 != len(bytes) {
-		return errors.New("Invalid length GYRO packet")
+	if len(bytes) != 6 {
+		return errors.New("invalid length GYRO packet")
 	}
 
 	gyro.X = float64(int16(binary.BigEndian.Uint16(bytes[0:2]))) / float64(scale.Values[0])

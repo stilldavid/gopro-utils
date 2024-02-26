@@ -3,7 +3,6 @@ package telemetry
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 )
 
 func stringInSlice(a string, list []string) bool {
@@ -56,10 +55,22 @@ func Read(f io.Reader) (*TELEM, error) {
 		"HUES",
 		"SROT",
 		"TIMO",
+		"STMP",
+		"GPSA",
+		"CORI",
+		"IORI",
+		"GRAV",
+		"WNDM",
+		"MWET",
+		"AALP",
+		"MSKP",
+		"LRVO",
+		"LRVS",
+		"LSKP",
 	}
 
-	label := make([]byte, 4, 4) // 4 byte ascii label of data
-	desc := make([]byte, 4, 4)  // 4 byte description of length of data
+	label := make([]byte, 4) // 4 byte ascii label of data
+	desc := make([]byte, 4)  // 4 byte description of length of data
 
 	// keep a copy of the scale to apply to subsequent sentences
 	s := SCAL{}
@@ -77,7 +88,7 @@ func Read(f io.Reader) (*TELEM, error) {
 		label_string := string(label)
 
 		if !stringInSlice(label_string, labels) {
-			err := fmt.Errorf("Could not find label in list: %s (%x)\n", label, label)
+			err := fmt.Errorf("could not find label in list: %s (%x)", label, label)
 			return nil, err
 		}
 
@@ -88,13 +99,13 @@ func Read(f io.Reader) (*TELEM, error) {
 		}
 
 		// first byte is zero, there is no length
-		if 0x0 == desc[0] {
+		if desc[0] == 0x0 {
 			continue
 		}
 
 		// skip empty packets
-		if "EMPT" == label_string {
-			io.CopyN(ioutil.Discard, f, 4)
+		if label_string == "EMPT" {
+			io.CopyN(io.Discard, f, 4)
 			continue
 		}
 
@@ -106,8 +117,8 @@ func Read(f io.Reader) (*TELEM, error) {
 		// uncomment to see label, type, size and length
 		//fmt.Printf("%s (%c) of size %v and len %v\n", label, desc[0], val_size, length)
 
-		if "SCAL" == label_string {
-			value := make([]byte, val_size*num_values, val_size*num_values)
+		if label_string == "SCAL" {
+			value := make([]byte, val_size*num_values)
 			read, err = f.Read(value)
 			if err == io.EOF || read == 0 {
 				return nil, err
@@ -130,68 +141,76 @@ func Read(f io.Reader) (*TELEM, error) {
 				}
 
 				// I think DVID is the payload boundary; this might be a bad assumption
-				if "DVID" == label_string {
+				if label_string == "DVID" {
 
 					// XXX: I think this might skip the first sentence
 					return t, nil
-				} else if "GPS5" == label_string {
+				} else if label_string == "GPS5" {
 					g := GPS5{}
 					g.Parse(value, &s)
 					t.Gps = append(t.Gps, g)
-				} else if "GPSU" == label_string {
+				} else if label_string == "GPSU" {
 					g := GPSU{}
 					err := g.Parse(value)
 					if err != nil {
 						return nil, err
 					}
 					t.Time = g
-				} else if "ACCL" == label_string {
+				} else if label_string == "ACCL" {
 					a := ACCL{}
 					err := a.Parse(value, &s)
 					if err != nil {
 						return nil, err
 					}
 					t.Accl = append(t.Accl, a)
-				} else if "TMPC" == label_string {
+				} else if label_string == "TMPC" {
 					tmp := TMPC{}
 					tmp.Parse(value)
 					t.Temp = tmp
-				} else if "TSMP" == label_string {
+				} else if label_string == "TSMP" {
 					tsmp := TSMP{}
 					tsmp.Parse(value, &s)
-				} else if "GYRO" == label_string {
+				} else if label_string == "GYRO" {
 					g := GYRO{}
 					err := g.Parse(value, &s)
 					if err != nil {
 						return nil, err
 					}
 					t.Gyro = append(t.Gyro, g)
-				} else if "GPSP" == label_string {
+				} else if label_string == "GPSP" {
 					g := GPSP{}
 					err := g.Parse(value)
 					if err != nil {
 						return nil, err
 					}
 					t.GpsAccuracy = g
-				} else if "GPSF" == label_string {
+				} else if label_string == "GPSF" {
 					g := GPSF{}
 					err := g.Parse(value)
 					if err != nil {
 						return nil, err
 					}
 					t.GpsFix = g
-				} else if "UNIT" == label_string {
-					// this is a string of units like "rad/s", not sure if it changes
-					//fmt.Printf("\tvals: %s\n", value)
-				} else if "SIUN" == label_string {
-					// this is the SI unit - also not sure if it changes
-					//fmt.Printf("\tvals: %s\n", value)
-				} else if "DVNM" == label_string {
-					// device name, "Camera"
-					//fmt.Printf("\tvals: %s\n", value)
-				} else {
-					//fmt.Printf("\tvalue is %v\n", value)
+				} else if label_string == "MAGN" {
+					m := MAGN{}
+					err := m.Parse(value, &s)
+					if err != nil {
+						return nil, err
+					}
+					t.Magn = append(t.Magn, m)
 				}
+				//  else if label_string == "UNIT" {
+				// 	// this is a string of units like "rad/s", not sure if it changes
+				// 	//fmt.Printf("\tvals: %s\n", value)
+				// } else if label_string == "SIUN" {
+				// 	// this is the SI unit - also not sure if it changes
+				// 	//fmt.Printf("\tvals: %s\n", value)
+				// } else if label_string == "DVNM" {
+				// 	// device name, "Camera"
+				// 	// fmt.Printf("\tvals: %s\n", value)
+				// } else {
+				// 	//fmt.Printf("\tvalue is %v\n", value)
+				// }
 			}
 		}
 
@@ -199,7 +218,7 @@ func Read(f io.Reader) (*TELEM, error) {
 		mod := length % 4
 		if mod != 0 {
 			seek := 4 - mod
-			io.CopyN(ioutil.Discard, f, seek)
+			io.CopyN(io.Discard, f, seek)
 		}
 	}
 

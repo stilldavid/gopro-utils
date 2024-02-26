@@ -2,3 +2,6 @@
 bin/gpmdinfo/gpmdinfo
 bin/gopro2json/gopro2json
 bin/gopro2gpx/gopro2gpx
+
+test_data/*
+releases/*
